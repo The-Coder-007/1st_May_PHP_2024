@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User-Details</title>
+    <link rel="stylesheet" href="./css/exe-1.css">
+</head>
+<body>
+    
+<div class="user_form">
+
+    <form action="" method="post" >
+
+        <h2>Step 1 : Your Details</h2>
+
+        <div class="ipt">
+            <label for="name">Name</label>
+            <input type="text" name="name" id="name" placeholder="First name and last name" required />
+        </div>
+
+        <div class="ipt">
+            <label for="email">Email</label>
+            <input type="email" name="email" id="email" placeholder="example@domain.com" required>
+        </div>
+
+        <div class="ipt">
+            <label for="phone">Phone</label>
+            <input type="tel" name="phone" id="phone" placeholder="Eg. +917676717617" required />
+        </div>
+
+        <h2>Step 2 : Delivery Address</h2>
+
+        <div class="txt">
+            <label for="address">Address</label>
+            <textarea name="address" id="address" cols="30" rows="5" required></textarea>
+        </div>
+
+        <div class="pstc">
+            <label for="postcode">Post code</label>
+            <input type="number" name="postcode" id="postcode" required />
+        </div>
+
+        
+        <div class="cnt">
+            <label for="country">Country</label>
+            <input type="text" name="country" id="country" required />
+        </div>
+        
+        <h2>Step 3 : Card Details</h2>
+
+        <div class="type">
+            <label for="cardtype">Card Type</label> <br>
+            <input type="radio" name="cardtype" id="cardtype" value="Visa" required /> <img src="./img/visa.png" width="30px" height="15px" alt=""> <span>VISA </span>
+            <input type="radio" name="cardtype" id="cardtype" value="AmEx" required /> <img src="./img/AmEx.png" width="30px" height="15px" alt=""> <span>AmEx</span>
+            <input type="radio" name="cardtype" id="cardtype" value="American Express" required /> <img src="./img/mastercard.png" width="30px" height="15px" alt=""> <span>AMERICAN EXPRESS</span>  <br>
+        </div>
+
+        <div class="crdn"> 
+            <label for="cardnum">Card Number</label>
+            <input type="number" name="cardnum" id="cardnum" required />   
+        </div>
+
+        <div class="crdn">
+        <label for="sec_code">Security Code</label>
+        <input type="number" name="sec-code" id="sec_code" required />
+         </div>
+
+         <div class="chn">
+        <label for="card_holder">Card Holder</label>
+        <input type="text" name="card_holder" id="card_holder" placeholder="Exact name as on card" required />
+        </div>
+
+        <button class="btn" type="submit">BUY IT!</button>
+
+    </form>
+
+</div>
+
+</body>
+</html>
