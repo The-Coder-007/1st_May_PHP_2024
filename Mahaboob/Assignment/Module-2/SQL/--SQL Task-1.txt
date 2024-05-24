@@ -22,7 +22,9 @@ VALUES
 (5,'Jerry','Pinto',650000, GETDATE(), 'Insurance'),
 (6,'Philip', 'Mathew', 750000, GETDATE(), 'Service'),
 (7,'TestName1', '123', 650000, GETDATE(), 'Serivice'),
-(8,'Testname2', 'Lname%', 6000000, GETDATE(), 'Insurance');
+(8,'Testname2', 'Lname%', 6000000, GETDATE(), 'Insurance'),
+(9,'N_John','N_Abraham', 1000000,GETDATE(),'Banking'),
+(10,'N_Michael','N_Clarke', 8000000,GETDATE(),'Insurance');
 
 --Creating Incentive Table
 
@@ -81,3 +83,206 @@ WHERE first_name LIKE 'o%';
 
 SELECT * FROM Employee
 WHERE MONTH(joining_date) = 1;
+
+
+--f)  Get department, total salary with respect to a department from employee table 
+--Order By total salary descending. 
+
+SELECT department, SUM(salary) AS total_salary
+FROM Employee
+GROUP BY department
+ORDER BY total_salary DESC;
+
+-- g) Get department-wise maximum salary from employee table ordered by salary ascending
+
+SELECT department, MAX(salary) AS max_salary
+FROM Employee
+GROUP BY department
+ORDER BY max_salary ASC;
+
+-- h) Select first_name, incentive amount from employee and incentives table for those employees who have incentives and incentive amount greater than 3000
+
+SELECT e.first_name, i.incentive_amount
+FROM Employee e
+JOIN Incentive i ON e.em_id = i.employee_ref_id
+WHERE i.incentive_amount > 3000;
+
+-- i) Select 2nd highest salary from employee table
+
+SELECT MAX(salary) AS second_highest_salary
+FROM Employee
+WHERE salary < (SELECT MAX(salary) FROM Employee);
+
+-- j) Select first_name, incentive amount from employee and incentives table for all employees who got incentives using LEFT JOIN
+
+SELECT e.first_name, i.incentive_amount
+FROM Employee e
+LEFT JOIN Incentive i ON e.em_id = i.employee_ref_id;
+
+-- k) Create a view of Employee table which stores first name, last name, and salary only
+
+CREATE VIEW EmployeeView AS
+SELECT first_name, last_name, salary
+FROM Employee;
+
+-- l) Create a procedure to find out department-wise highest salary
+
+CREATE PROCEDURE GetDepartmentWiseHighestSalary
+AS
+BEGIN
+    SELECT department, MAX(salary) AS highest_salary
+    FROM Employee
+    GROUP BY department;
+END;
+
+-- m) Create an AFTER INSERT trigger on Employee table which inserts records into the view table
+
+-- Creating the view table
+CREATE TABLE EmployeeViewTable (
+    first_name VARCHAR(100),
+    last_name VARCHAR(100),
+    salary BIGINT
+);
+
+-- Creating the trigger
+CREATE TRIGGER after_employee_insert
+ON Employee
+AFTER INSERT
+AS
+BEGIN
+    INSERT INTO EmployeeViewTable (first_name, last_name, salary)
+    SELECT inserted.first_name, inserted.last_name, inserted.salary
+    FROM inserted;
+END;
+
+--SQL TASK-2
+
+-- Creating the Salesperson table
+CREATE TABLE Salesperson (
+    sno INT PRIMARY KEY,
+    sname VARCHAR(50) NOT NULL,
+    city VARCHAR(50) NOT NULL,
+    comm FLOAT NOT NULL
+);
+
+
+-- Inserting data into the Salesperson table
+INSERT INTO Salesperson (sno, sname, city, comm) VALUES
+(1001, 'PEEL', 'London', 0.12),
+(1002, 'Serres', 'San Jose', 0.13),
+(1003, 'Axelrod', 'New York', 0.1),
+(1004, 'Motika', 'London', 0.11),
+(1007, 'Rafkin', 'Barcelona', 0.15);
+
+
+-- Creating the Customer table with a foreign key reference to Salesperson
+CREATE TABLE Customer (
+    cnm INT PRIMARY KEY,
+    cname VARCHAR(50) NOT NULL,
+    city VARCHAR(50) NOT NULL,
+    rating INT NOT NULL,
+    sno INT,
+    CONSTRAINT FK_Customer_Salesperson FOREIGN KEY (sno) REFERENCES Salesperson(sno)
+);
+
+-- Inserting data into the Customer table
+INSERT INTO Customer (cnm, cname, city, rating, sno) VALUES
+(201, 'Hoffman', 'London', 100, 1001),
+(202, 'Givoanne', 'Rome', 200, 1003),
+(203, 'Leu', 'San Jose', 300, 1002),
+(204, 'Grass', 'Barcelona', 100, 1002),
+(206, 'Clemens', 'London', 300, 1007),
+(207, 'Pereira', 'Rome', 100, 1004);
+
+
+-- Creating the Order table with foreign key references to Customer and Salesperson
+CREATE TABLE Orders (
+    onm INT PRIMARY KEY,
+    amt FLOAT NOT NULL,
+    ode DATE NOT NULL,
+    cnm INT,
+    sno INT,
+    CONSTRAINT FK_Order_Customer FOREIGN KEY (cnm) REFERENCES Customer(cnm),
+    CONSTRAINT FK_Order_Salesperson FOREIGN KEY (sno) REFERENCES Salesperson(sno)
+);
+
+-- Inserting data into the Orders table
+INSERT INTO Orders (onm, amt, ode, cnm, sno) VALUES
+(3001, 18.69, '1994-10-3', 201, 1007),
+(3002, 1900.1, '1994-10-3', 207, 1004),
+(3003, 767.19, '1994-10-3', 201, 1001),
+(3005, 3005, '1994-10-3', 203, 1002),
+(3006, 3006, '1994-10-4', 201, 1007),
+(3007, 3007, '1994-10-5', 204, 1002),
+(3008, 3008, '1994-10-5', 206, 1001),
+(3009, 3009, '1994-10-4', 202, 1003),
+(3010, 3010, '1994-10-6', 204, 1002),
+(3011, 3011, '1994-10-6', 206, 1001);
+
+--a) All orders for more than $1000. 
+
+SELECT *
+FROM Orders
+WHERE amt > 1000;
+
+--b) Names and cities of all salespeople in London with commission above 0.10. 
+
+SELECT sname, city
+FROM Salesperson
+WHERE city = 'London' AND comm > 0.10;
+
+--c) All salespeople either in Barcelona or in London. 
+
+SELECT *
+FROM Salesperson
+WHERE city IN ('Barcelona', 'London');
+
+--d) All salespeople with commission between 0.10 and 0.12. (Boundary values should 
+--be excluded). 
+
+SELECT *
+FROM Salesperson
+WHERE comm > 0.10 AND comm < 0.12;
+
+--e) All customers with NULL values in city column. 
+
+SELECT *
+FROM Customer
+WHERE city IS NULL;
+
+--f) All orders taken on Oct 3Rd and Oct 4th 1994. 
+
+SELECT *
+FROM Orders
+WHERE ode BETWEEN '1994-10-03' AND '1994-10-04';
+
+--g) All customers serviced by peel or Motika. 
+
+SELECT *
+FROM Customer
+WHERE sno IN (
+    SELECT sno FROM Salesperson WHERE sname IN ('Peel', 'Motika')
+);
+
+--h) All customers whose names begin with a letter from A to B
+
+SELECT *
+FROM Customer
+WHERE cname LIKE 'A%' OR cname LIKE 'B%';
+
+--i) All customers excluding those with rating <= 100 unless they are located in Rome. 
+
+SELECT *
+FROM Customer
+WHERE (rating <= 100 OR city = 'Rome') AND rating IS NOT NULL;
+
+--j) All orders except those with 0 or NULL value in amt field
+
+SELECT *
+FROM Orders
+WHERE amt IS NOT NULL AND amt != 0;
+
+--k) Count the number of salespeople currently listing orders in the order table. 
+
+SELECT COUNT(DISTINCT sno) AS num_salespeople
+FROM Orders;
